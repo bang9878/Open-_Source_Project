@@ -17,12 +17,14 @@ root.resizable(False, False)  # x,y 값 변경 불가 (창 크기 변경 불가)
 now = datetime.datetime.now()
 now_day = (now.strftime('%Y-%m-%d'))
 
-back = ["풀업", "랫풀다운", "시트디로우", "암풀다운", "티바로우"]
-chest = ["덤벨프레스", "벤치프레스", "인클라인", "플라이"]
-leg = ["스쿼트", "레그프레스", "레그익스텐션", "레그컬" ]
+back = []
+chest = []
+leg = []
 routine_exit = False
+
 play = True
-user_set = 1
+
+
 
 
 # 시작버튼
@@ -46,12 +48,10 @@ def exit_btn():
 # routine을 시작하려면 routine_exit가 False인 경우에만 실행 가능함
 
 
-def routine(index, num):
+def routine(index, num, health_time, rest_time):
     global main_text
     if routine_exit == False:
-
         main_time_title.config(text=index[num] + " 운동이 시작 예정입니다.")
-
 
         while True:
             btn_time = 10  #준비타이머
@@ -68,14 +68,14 @@ def routine(index, num):
                 break
             sd.Beep(600, 1000)
 
-            btn_time = 10   #운동시간타이머
+           #운동시간타이머
             main_time_title.config(text=index[num])
-            while btn_time >= 0:
-                main_text = f"{btn_time}"
+            while health_time >= 0:
+                main_text = f"{health_time}"
                 time.sleep(1)
                 main_time_num.config(text=main_text)
 
-                btn_time = btn_time - 1
+                health_time = health_time - 1
                 if routine_exit == True:
                     main_time_num.config(text="종료 되었습니다.")
                     break
@@ -84,13 +84,14 @@ def routine(index, num):
                 break
             sd.Beep(600, 300)
             sd.Beep(600, 300)
-            btn_time = 10   # 쉬는시간 타이머
+
+           # 쉬는시간 타이머
             main_time_title.config(text="종목 사이 쉬는시간 입니다.")
-            while btn_time >= 0:
-                main_text = f"{btn_time}"
+            while rest_time >= 0:
+                main_text = f"{rest_time}"
                 time.sleep(1)
                 main_time_num.config(text=main_text)
-                btn_time = btn_time - 1
+                rest_time = rest_time - 1
                 if routine_exit == True:
                     main_time_num.config(text="종료 되었습니다.")
                     break
@@ -104,71 +105,30 @@ def work():
     global main_text
 
     user_set = int(input("몇 세트 하시겠습니까?: "))
+    health_time = int(input("운동시간(초단위): "))
+    rest_time = int(input("휴식시간(초단위): "))
+
+    back = list(input("등운동 종목을 입력하세요: ").split())
+    chest = list(input("가슴운동 종목을 입력하세요: ").split())
+    leg = list(input("하체운동 종목을 입력하세요: ").split())
+
 
     if pysical_value.get() == 1:  # 등
-        idx = 0
-        while idx < user_set:
-            routine(back, 0)
-            idx += 1
-        idx = 0
-        while idx < user_set:
-            routine(back, 1)
-            idx += 1
-        idx = 0
-        while idx < user_set:
-            routine(back, 3)
-            idx += 1
-        idx = 0
-        while idx < user_set:
-            routine(back, 4)
-            idx += 1
-        idx = 0
-        while idx < user_set:
-            routine(back, 5)
-            idx += 1
-
+        for i in range(len(back)+1):
+            for j in range(user_set):
+                routine(back, i,health_time,rest_time)
 
     elif pysical_value.get() == 2:   # 가슴
 
-
-        idx = 0
-        while idx < user_set:
-            routine(chest, 0)
-            idx += 1
-        idx = 0
-        while idx < user_set:
-            routine(chest, 1)
-            idx += 1
-        idx = 0
-        while idx < user_set:
-            routine(chest, 2)
-            idx += 1
-        idx = 0
-        while idx < user_set:
-            routine(chest, 3)
-            idx += 1
-
+        for i in range(len(chest)+1):
+            for j in range(user_set):
+                routine(chest, i,health_time,rest_time)
 
     elif pysical_value.get() == 3:    # 하체
 
-        idx = 0
-        while idx < user_set:
-            routine(leg, 0)
-            idx += 1
-        idx = 0
-
-        while idx < user_set:
-            routine(leg, 1)
-            idx += 1
-
-        while idx < user_set:
-            routine(leg, 2)
-            idx += 1
-        idx = 0
-
-        while idx < user_set:
-            routine(leg, 3)
-            idx += 1
+        for i in range(len(leg)+1):
+            for j in range(user_set):
+                routine(leg, i,health_time,rest_time)
 
     msgbox.showinfo("알림", "종료 되었습니다.")
 
@@ -184,7 +144,7 @@ def play_music():
         pygame.mixer.music.load("C:/Users/wnsdu/Music/physical.mp3")
         pygame.mixer.music.play()
 
-
+# 일시정지 버튼
 def pause_music():
     pygame.mixer.music.pause()
     global play
